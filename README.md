@@ -30,4 +30,3 @@ marv.scan(directory, (err, migrations) => {
     })
 })
 ```
-
