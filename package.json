@@ -1,6 +1,6 @@
 {
   "name": "marv-pg-driver",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A postgres marv driver implementation",
   "main": "index.js",
   "scripts": {
