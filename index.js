@@ -5,8 +5,9 @@ var async = require('async')
 var format = require('util').format
 var debug = require('debug')('marv:pg-driver')
 
-module.exports = function(config) {
+module.exports = function(_config) {
 
+    var config = _.merge({ table: 'migrations', connection: {} }, _config)
     var SQL = {
         ensureMigrationsTable: load('ensure-migrations-table.sql'),
         retrieveMigrations: load('retrieve-migrations.sql'),
@@ -36,7 +37,7 @@ module.exports = function(config) {
         cb()
     }
 
-    function deleteMigrations(cb) {
+    function dropMigrations(cb) {
         auditClient.query(SQL.dropMigrationsTable, guard(cb))
     }
 
@@ -72,7 +73,7 @@ module.exports = function(config) {
     }
 
     function load(filename) {
-        return fs.readFileSync(path.join(__dirname, 'sql', filename), 'utf-8').replace(/migrations/g, config.table || 'migrations')
+        return fs.readFileSync(path.join(__dirname, 'sql', filename), 'utf-8').replace(/migrations/g, config.table)
     }
 
     function guard(cb) {
@@ -84,7 +85,7 @@ module.exports = function(config) {
     return {
         connect: connect,
         disconnect: disconnect,
-        deleteMigrations: deleteMigrations,
+        dropMigrations: dropMigrations,
         ensureMigrations: ensureMigrations,
         lockMigrations: lockMigrations,
         unlockMigrations: unlockMigrations,

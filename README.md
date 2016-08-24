@@ -25,8 +25,9 @@ const driver = pgDriver({
     }
 })
 marv.scan(directory, (err, migrations) => {
+    if (err) throw err
     marv.migrate(migrations, driver, (err) => {
-        if (err) console.error(err.message)
+        if (err) throw err
     })
 })
 ```

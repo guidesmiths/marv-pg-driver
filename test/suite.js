@@ -1,5 +1,6 @@
 var Hath = require('hath')
 var complianceTests = require('marv-compliance-tests')
+var driverTests = require('./driver-tests')
 var driver = require('..')
 
 function setup(t, done) {
@@ -13,6 +14,7 @@ function setup(t, done) {
             password: ''
         }
     }
+    t.locals.config = config
     t.locals.driver = driver(config)
     t.locals.driver2 = driver(config)
     t.locals.migration = {
@@ -27,7 +29,8 @@ function setup(t, done) {
 
 module.exports = Hath.suite('Postgres Driver Tests', [
     setup,
-    complianceTests
+    complianceTests,
+    driverTests
 ])
 
 if (module === require.main) {
