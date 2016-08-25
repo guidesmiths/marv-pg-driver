@@ -7,7 +7,7 @@ function shouldRunMigration(t, done) {
     const client = new pg.Client(t.locals.config.connection)
     client.connect(function(err) {
         if (err) throw err
-        client.query('DROP TABLE pg_migrations; DROP TABLE foo; DROP TABLE bar;', function(err) {
+        client.query('DROP TABLE IF EXISTS pg_migrations; DROP TABLE IF EXISTS foo; DROP TABLE IF EXISTS bar;', function(err) {
             if (err) throw err
             marv.scan(path.join(__dirname, 'migrations'), function(err, migrations) {
                 if (err) throw err
