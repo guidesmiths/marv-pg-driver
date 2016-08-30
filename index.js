@@ -27,14 +27,15 @@ module.exports = function(_config) {
         async.series([
             auditClient.connect.bind(auditClient),
             migrationClient.connect.bind(migrationClient)
-        ], cb)
+        ], guard(cb))
     }
 
     function disconnect(cb) {
         debug('Disconnecting from %s', getLoggableUrl())
-        auditClient.end()
-        migrationClient.end()
-        cb()
+        async.series([
+            auditClient.end.bind(auditClient),
+            migrationClient.end.bind(migrationClient)
+        ], guard(cb))
     }
 
     function dropMigrations(cb) {
