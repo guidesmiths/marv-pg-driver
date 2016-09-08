@@ -17,15 +17,15 @@ module.exports = function(_config) {
         insertMigration: load('insert-migration.sql')
     }
     var pg = config.pg || require('pg')
-    var auditClient
+    var lockClient
     var migrationClient
 
     function connect(cb) {
-        auditClient = new pg.Client(config.connection)
+        lockClient = new pg.Client(config.connection)
         migrationClient = new pg.Client(config.connection)
         debug('Connecting to %s', getLoggableUrl())
         async.series([
-            auditClient.connect.bind(auditClient),
+            lockClient.connect.bind(lockClient),
             migrationClient.connect.bind(migrationClient)
         ], guard(cb))
     }
@@ -33,29 +33,29 @@ module.exports = function(_config) {
     function disconnect(cb) {
         debug('Disconnecting from %s', getLoggableUrl())
         async.series([
-            auditClient.end.bind(auditClient),
+            lockClient.end.bind(lockClient),
             migrationClient.end.bind(migrationClient)
         ], guard(cb))
     }
 
     function dropMigrations(cb) {
-        auditClient.query(SQL.dropMigrationsTable, guard(cb))
+        lockClient.query(SQL.dropMigrationsTable, guard(cb))
     }
 
     function ensureMigrations(cb) {
-        auditClient.query(SQL.ensureMigrationsTable, guard(cb))
+        lockClient.query(SQL.ensureMigrationsTable, guard(cb))
     }
 
     function lockMigrations(cb) {
-        auditClient.query(SQL.lockMigrationsTable, guard(cb))
+        lockClient.query(SQL.lockMigrationsTable, guard(cb))
     }
 
     function unlockMigrations(cb) {
-        auditClient.query(SQL.unlockMigrationsTable, guard(cb))
+        lockClient.query(SQL.unlockMigrationsTable, guard(cb))
     }
 
     function getMigrations(cb) {
-        auditClient.query(SQL.retrieveMigrations, function(err, result) {
+        lockClient.query(SQL.retrieveMigrations, function(err, result) {
             if (err) return cb(err)
             cb(null, result.rows)
         })
@@ -65,12 +65,12 @@ module.exports = function(_config) {
         debug('Run migration %s: %s\n%s', migration.level, migration.comment, migration.script)
         migrationClient.query(migration.script, function(err) {
             if (err) return cb(err)
-            auditClient.query(SQL.insertMigration, [migration.level, migration.comment, migration.timestamp, migration.checksum], guard(cb))
+            migrationClient.query(SQL.insertMigration, [migration.level, migration.comment, migration.timestamp, migration.checksum], guard(cb))
         })
     }
 
     function getLoggableUrl() {
-        return format('postgres://%s:%s@%s:%s/%s', auditClient.connectionParameters.user, '******', auditClient.connectionParameters.host, auditClient.connectionParameters.port, auditClient.connectionParameters.database)
+        return format('postgres://%s:%s@%s:%s/%s', lockClient.connectionParameters.user, '******', lockClient.connectionParameters.host, lockClient.connectionParameters.port, lockClient.connectionParameters.database)
     }
 
     function load(filename) {
