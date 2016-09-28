@@ -2,6 +2,8 @@ var Hath = require('hath')
 var complianceTests = require('marv-compliance-tests')
 var driverTests = require('./driver-tests')
 var driver = require('..')
+var report = require('hath-report-spec')
+require('hath-assert')(Hath)
 
 function setup(t, done) {
     var config = {
@@ -34,5 +36,5 @@ module.exports = Hath.suite('Postgres Driver Tests', [
 ])
 
 if (module === require.main) {
-  module.exports(new Hath())
+  module.exports(new Hath(report))
 }
