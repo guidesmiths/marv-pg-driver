@@ -4,6 +4,7 @@
   "description": "A postgres marv driver implementation",
   "main": "index.js",
   "scripts": {
+    "docker": "bash -c '(docker network inspect local 2>&1 > /dev/null || docker network create local) && docker run -d --name postgres -p 5432:5432 postgres'",
     "test": "node test/suite.js",
     "lint": "eslint .",
     "prepush": "npm run lint && npm test"

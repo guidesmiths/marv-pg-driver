@@ -69,9 +69,18 @@ module.exports = function(_config) {
         debug('Run migration %s: %s\n%s', migration.level, migration.comment, migration.script)
         userClient.query(migration.script, function(err) {
             if (err) return cb(err)
-            if (migration.audit !== false) return migrationClient.query(SQL.insertMigration, [migration.level, migration.comment, migration.timestamp, migration.checksum], guard(cb))
+            if (auditable(migration)) {
+                return migrationClient.query(SQL.insertMigration, [migration.level, migration.comment, migration.timestamp, migration.checksum], guard(cb))
+            }
             cb()
         })
+    }
+
+    function auditable(migration) {
+        // audit was deprecated in favour of migration.audit. Need to support both for a short while.
+        if (migration.hasOwnProperty('directives')) return migration.directives.audit !== false
+        if (migration.hasOwnProperty('audit')) return migration.audit !== false
+        return true
     }
 
     function getLoggableUrl() {
