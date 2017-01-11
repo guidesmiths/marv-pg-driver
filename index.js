@@ -5,9 +5,9 @@ var async = require('async')
 var format = require('util').format
 var debug = require('debug')('marv:pg-driver')
 
-module.exports = function(_config) {
+module.exports = function(options) {
 
-    var config = _.merge({ table: 'migrations', connection: {} }, _config)
+    var config = _.merge({ table: 'migrations', connection: {} }, options)
     var SQL = {
         ensureMigrationsTables: load('ensure-migrations-tables.sql'),
         retrieveMigrations: load('retrieve-migrations.sql'),
@@ -77,9 +77,11 @@ module.exports = function(_config) {
     }
 
     function auditable(migration) {
-        // audit was deprecated in favour of migration.audit. Need to support both for a short while.
         if (migration.hasOwnProperty('directives')) return migration.directives.audit !== false
-        if (migration.hasOwnProperty('audit')) return migration.audit !== false
+        if (migration.hasOwnProperty('audit')) {
+            if (!config.quiet) console.warn("The 'audit' option is deprecated. Please use 'directives.audit' instead. You can disable this warning by setting 'quiet' to true.")
+            return migration.audit !== false
+        }
         return true
     }
 
