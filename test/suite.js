@@ -8,6 +8,7 @@ require('hath-assert')(Hath)
 function setup(t, done) {
     var config = {
         table: 'pg_migrations',
+        quiet: true,
         connection: {
             host: 'localhost',
             port: 5432,
@@ -61,6 +62,7 @@ function setup(t, done) {
             checksum: '401f1b790bf394cf6493425c1d7e33b0'
         }
     }
+    t.locals.migration = t.locals.migrations.simple
     done()
 }
 
