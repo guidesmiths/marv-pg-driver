@@ -81,7 +81,10 @@ module.exports = function(options) {
 
         debug('Run migration %s: %s\n%s', migration.level, migration.comment, migration.script)
         userClient.query(migration.script, function(err) {
-            if (err) return cb(err)
+            if (err) {
+                err.migration = migration
+                return cb(err)
+            }
             if (auditable(migration)) {
                 return migrationClient.query(SQL.insertMigration, [
                     migration.level,

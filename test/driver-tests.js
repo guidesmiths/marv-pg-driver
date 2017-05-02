@@ -34,6 +34,28 @@ function shouldRunMigration(t, done) {
     })
 }
 
+function shouldTraceMigrationError (t, done) {
+    const client = new pg.Client(t.locals.config.connection)
+    client.connect(function (err) {
+        if (err) throw err
+        client.query('DROP TABLE IF EXISTS pg_migrations; DROP TABLE IF EXISTS foo;', function (err) {
+            if (err) throw err
+            marv.scan(path.join(__dirname, 'migrations-force-err'), function (err, migrations) {
+                if (err) throw err
+                marv.migrate(migrations, t.locals.driver, function (err) {
+                    if (err) {
+                        t.assertEquals(err.migration.level, 1)
+                        t.assertEquals(err.migration.comment, 'create foo table')
+                    }
+                    client.end()
+                    done()
+                })
+            })
+        })
+    })
+}
+
 module.exports = Hath.suite('Driver Tests', [
-    shouldRunMigration
+    shouldRunMigration,
+    shouldTraceMigrationError
 ])
