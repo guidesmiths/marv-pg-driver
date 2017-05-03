@@ -88,7 +88,7 @@ module.exports = function(options) {
                     migration.directives.comment || migration.comment,
                     migration.timestamp,
                     migration.checksum
-                ], (err) => {
+                ], function(err) {
                     if (err) return cb(decorate(err, migration))
                     cb()
                 })
