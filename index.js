@@ -13,11 +13,11 @@ module.exports = function(options) {
     var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'))
     var logger = options.logger || console
     var SQL = {
-        ensureMigrationsTables: load('ensure-migrations-tables.sql'),
+        ensureMigrationsTable: load('ensure-migrations-table.sql'),
         retrieveMigrations: load('retrieve-migrations.sql'),
-        dropMigrationsTables: load('drop-migrations-tables.sql'),
-        lockMigrationsLockTable: load('lock-migrations-lock-table.sql'),
-        unlockMigrationsLockTable: load('unlock-migrations-lock-table.sql'),
+        dropMigrationsTable: load('drop-migrations-table.sql'),
+        acquireLock: load('acquire-lock.sql'),
+        releaseLock: load('release-lock.sql'),
         insertMigration: load('insert-migration.sql')
     }
     var pg = config.pg || require('pg')
@@ -47,19 +47,23 @@ module.exports = function(options) {
     }
 
     function dropMigrations(cb) {
-        migrationClient.query(SQL.dropMigrationsTables, guard(cb))
+        migrationClient.query(SQL.dropMigrationsTable, guard(cb))
     }
 
     function ensureMigrations(cb) {
-        migrationClient.query(SQL.ensureMigrationsTables, guard(cb))
+        async.series([
+            lockMigrations,
+            migrationClient.query.bind(migrationClient, SQL.ensureMigrationsTable),
+            unlockMigrations
+        ], guard(cb))
     }
 
     function lockMigrations(cb) {
-        lockClient.query(SQL.lockMigrationsLockTable, guard(cb))
+        lockClient.query(SQL.acquireLock, guard(cb))
     }
 
     function unlockMigrations(cb) {
-        lockClient.query(SQL.unlockMigrationsLockTable, guard(cb))
+        lockClient.query(SQL.releaseLock, guard(cb))
     }
 
     function getMigrations(cb) {
