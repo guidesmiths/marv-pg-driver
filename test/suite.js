@@ -28,6 +28,14 @@ function setup(t, done) {
             timestamp: new Date(),
             checksum: '401f1b790bf394cf6493425c1d7e33b0'
         },
+        namespace: {
+            level: 1,
+            comment: 'test migration',
+            script: 'SELECT 1',
+            timestamp: new Date(),
+            checksum: '401f1b790bf394cf6493425c1d7e33b0',
+            namespace: 'so-special'
+        },
         comment: {
             level: 2,
             comment: 'do not use',
