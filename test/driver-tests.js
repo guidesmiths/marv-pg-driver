@@ -3,6 +3,7 @@ var marv = require('marv')
 var path = require('path')
 var pg = require('pg')
 var fs = require('fs')
+var async = require('async')
 
 function shouldRunMigration(t, done) {
     const dropTables = load(t, ['sql', 'drop-tables.sql'])
@@ -37,12 +38,16 @@ function shouldRunMigration(t, done) {
 }
 
 function shouldEnsureNamespaceColumn(t, done) {
+    const dropTables = load(t, ['sql', 'drop-tables.sql'])
     const ensureLegacyMigrations = load(t, ['sql', 'ensure-legacy-migrations-table.sql'])
     const checkNamespace = load(t, ['..', 'sql', 'check-namespace-column.sql'])
     const client = new pg.Client(t.locals.config.connection)
     client.connect(function(err) {
         if (err) throw err
-        client.query(ensureLegacyMigrations, function (err) {
+        async.series([
+            client.query.bind(client, dropTables),
+            client.query.bind(client, ensureLegacyMigrations)
+        ], function (err) {
             if (err) throw err
             marv.scan(path.join(__dirname, 'migrations'), function(err, migrations) {
                 if (err) throw err
