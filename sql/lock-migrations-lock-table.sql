@@ -1,3 +1,2 @@
 BEGIN TRANSACTION;
-LOCK TABLE migrations_lock
---IN EXCLUSIVE MODE;
+LOCK TABLE migrations_lock;
