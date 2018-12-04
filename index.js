@@ -13,11 +13,13 @@ module.exports = function(options) {
     var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'))
     var logger = options.logger || console
     var SQL = {
-        ensureMigrationsTable: load('ensure-migrations-table.sql'),
+        ensureMigrationsTables: load('ensure-migrations-tables.sql'),
         checkNamespaceColumn: load('check-namespace-column.sql'),
         addNamespaceColumn: load('add-namespace-column.sql'),
         retrieveMigrations: load('retrieve-migrations.sql'),
-        dropMigrationsTable: load('drop-migrations-table.sql'),
+        dropMigrationsTables: load('drop-migrations-tables.sql'),
+        lockMigrationsLockTable: load('lock-migrations-lock-table.sql'),
+        unlockMigrationsLockTable: load('unlock-migrations-lock-table.sql'),
         acquireLock: load('acquire-lock.sql'),
         releaseLock: load('release-lock.sql'),
         insertMigration: load('insert-migration.sql')
@@ -49,15 +51,27 @@ module.exports = function(options) {
     }
 
     function dropMigrations(cb) {
-        migrationClient.query(SQL.dropMigrationsTable, guard(cb))
+        migrationClient.query(SQL.dropMigrationsTables, guard(cb))
     }
 
     function ensureMigrations(cb) {
+        debug('Ensure migrations')
         async.series([
+            ensureMigrationsTables.bind(null, true),
             lockMigrations,
-            migrationClient.query.bind(migrationClient, SQL.ensureMigrationsTable),
             migrationClient.query.bind(migrationClient, SQL.checkNamespaceColumn)
         ], ensureNamespace)
+
+        function ensureMigrationsTables(firstRun, cb){
+            migrationClient.query(SQL.ensureMigrationsTables, function (err) {
+                if (firstRun && err && err.code === '23505') {
+                    debug('Possible race condition when creating migration tables - retrying.')
+                    setTimeout(ensureMigrationsTables.bind(null, false, cb), 100)
+                } else {
+                    cb(err)
+                }
+            })
+        }
 
         function ensureNamespace(err, results) {
             if (err) return cb(err)
@@ -73,11 +87,11 @@ module.exports = function(options) {
     }
 
     function lockMigrations(cb) {
-        lockClient.query(SQL.acquireLock, guard(cb))
+        lockClient.query(SQL.lockMigrationsLockTable, guard(cb))
     }
 
     function unlockMigrations(cb) {
-        lockClient.query(SQL.releaseLock, guard(cb))
+        lockClient.query(SQL.unlockMigrationsLockTable, guard(cb))
     }
 
     function getMigrations(cb) {
@@ -88,6 +102,7 @@ module.exports = function(options) {
     }
 
     function runMigration(_migration, cb) {
+        debug('Run migration')
         var migration = _.merge({}, _migration, { directives: marv.parseDirectives(_migration.script) })
 
         checkDirectives(migration.directives)
