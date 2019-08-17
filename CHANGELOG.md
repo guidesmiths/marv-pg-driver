@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleated
+### Added
+- Automated codeclimate reporting
+
 ## [2.2.1]
 ### Changed
 - General modernisation
