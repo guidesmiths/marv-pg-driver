@@ -1,0 +1,2 @@
+export CODECLIMATE_REPO_TOKEN=bb072bddf9d7c37f932eb1b84187978600fc7c298e37ff9ae4578130928b049a
+codeclimate-test-reporter < coverage/lcov.info
