@@ -1,8 +1,11 @@
 # Change Log
 
-## Unreleated
+## [2.2.2]
 ### Added
 - Automated codeclimate reporting
+
+### Fixed
+- Badges
 
 ## [2.2.1]
 ### Changed
