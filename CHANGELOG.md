@@ -1,7 +1,8 @@
 # Change Log
 
-## [2.3.0]
+## [3.0.0]
 ### Changed
+- No longer parses directives from script (responsibility moved to marv)
 - Removed marv dependency
 - Updated dependencies
 
