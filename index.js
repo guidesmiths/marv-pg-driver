@@ -103,6 +103,8 @@ module.exports = function(options) {
   function runMigration(migration, cb) {
     debug('Run migration');
 
+    _.defaults(migration, { directives: {}  });
+
     checkDirectives(migration.directives);
 
     if (/^true$/i.test(migration.directives.skip)) {
