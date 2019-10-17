@@ -13,13 +13,14 @@
   "author": "GuideSmiths Ltd",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^6.1.0",
+    "eslint": "^6.5.1",
     "eslint-config-imperative": "^3.0.0",
     "eslint-plugin-imperative": "^3.0.0",
     "hath": "^1.0.1",
     "hath-assert": "^0.2.0",
     "hath-report-spec": "^0.1.0",
     "husky": "^3.0.3",
+    "marv": "^3.1.0",
     "marv-compliance-tests": "^2.0.0",
     "nyc": "^14.1.1"
   },
@@ -27,7 +28,6 @@
     "async": "^3.1.0",
     "debug": "^4.1.1",
     "lodash": "^4.17.15",
-    "marv": "^2.4.1",
     "pg": "^7.12.1"
   },
   "keywords": [
