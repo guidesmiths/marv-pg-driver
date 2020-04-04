@@ -4,6 +4,7 @@
 ### Changed
 - Updated dependencies
 - Switch pg to a peer dependency
+- Drop support for Node 6
 
 ## [3.0.0]
 ### Changed
