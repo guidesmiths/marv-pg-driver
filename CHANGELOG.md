@@ -1,5 +1,10 @@
 # Change Log
 
+## [8.0.0]
+### Changed
+- Updated dependencies
+- Switch pg to a peer dependency
+
 ## [3.0.0]
 ### Changed
 - No longer parses directives from script (responsibility moved to marv)
