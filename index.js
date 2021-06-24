@@ -10,16 +10,16 @@ module.exports = function(options) {
   var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
   var logger = options.logger || console;
   var SQL = {
-    ensureMigrationsTables: require('./sql/ensure-migrations-tables.js'),
-    checkNamespaceColumn: require('./sql/check-namespace-column.js'),
-    addNamespaceColumn: require('./sql/add-namespace-column.js'),
-    retrieveMigrations: require('./sql/retrieve-migrations.js'),
-    dropMigrationsTables: require('./sql/drop-migrations-tables.js'),
-    lockMigrationsLockTable: require('./sql/lock-migrations-lock-table.js'),
-    unlockMigrationsLockTable: require('./sql/unlock-migrations-lock-table.js'),
-    acquireLock: require('./sql/acquire-lock.js'),
-    releaseLock: require('./sql/release-lock.js'),
-    insertMigration: require('./sql/insert-migration.js')
+    ensureMigrationsTables: require('./sql/ensure-migrations-tables.sql'),
+    checkNamespaceColumn: require('./sql/check-namespace-column.sql'),
+    addNamespaceColumn: require('./sql/add-namespace-column.sql'),
+    retrieveMigrations: require('./sql/retrieve-migrations.sql'),
+    dropMigrationsTables: require('./sql/drop-migrations-tables.sql'),
+    lockMigrationsLockTable: require('./sql/lock-migrations-lock-table.sql'),
+    unlockMigrationsLockTable: require('./sql/unlock-migrations-lock-table.sql'),
+    acquireLock: require('./sql/acquire-lock.sql'),
+    releaseLock: require('./sql/release-lock.sql'),
+    insertMigration: require('./sql/insert-migration.sql')
   };
   var pg = config.pg || require('pg');
   var lockClient;
