@@ -1,5 +1,3 @@
-var fs = require('fs');
-var path = require('path');
 var _ = require('lodash');
 var async = require('async');
 var format = require('util').format;
@@ -12,16 +10,16 @@ module.exports = function(options) {
   var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
   var logger = options.logger || console;
   var SQL = {
-    ensureMigrationsTables: load('ensure-migrations-tables.sql'),
-    checkNamespaceColumn: load('check-namespace-column.sql'),
-    addNamespaceColumn: load('add-namespace-column.sql'),
-    retrieveMigrations: load('retrieve-migrations.sql'),
-    dropMigrationsTables: load('drop-migrations-tables.sql'),
-    lockMigrationsLockTable: load('lock-migrations-lock-table.sql'),
-    unlockMigrationsLockTable: load('unlock-migrations-lock-table.sql'),
-    acquireLock: load('acquire-lock.sql'),
-    releaseLock: load('release-lock.sql'),
-    insertMigration: load('insert-migration.sql')
+    ensureMigrationsTables: require('./sql/ensure-migrations-tables.sql'),
+    checkNamespaceColumn: require('./sql/check-namespace-column.sql'),
+    addNamespaceColumn: require('./sql/add-namespace-column.sql'),
+    retrieveMigrations: require('./sql/retrieve-migrations.sql'),
+    dropMigrationsTables: require('./sql/drop-migrations-tables.sql'),
+    lockMigrationsLockTable: require('./sql/lock-migrations-lock-table.sql'),
+    unlockMigrationsLockTable: require('./sql/unlock-migrations-lock-table.sql'),
+    acquireLock: require('./sql/acquire-lock.sql'),
+    releaseLock: require('./sql/release-lock.sql'),
+    insertMigration: require('./sql/insert-migration.sql')
   };
   var pg = config.pg || require('pg');
   var lockClient;
@@ -150,10 +148,6 @@ module.exports = function(options) {
 
   function getLoggableUrl() {
     return format('postgres://%s:%s@%s:%s/%s', userClient.connectionParameters.user, '******', userClient.connectionParameters.host, userClient.connectionParameters.port, userClient.connectionParameters.database);
-  }
-
-  function load(filename) {
-    return fs.readFileSync(path.join(__dirname, 'sql', filename), 'utf-8').replace(/migrations/g, config.table);
   }
 
   function guard(cb) {

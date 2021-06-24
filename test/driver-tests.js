@@ -2,11 +2,12 @@ var Hath = require('hath');
 var marv = require('marv');
 var path = require('path');
 var pg = require('pg');
-var fs = require('fs');
 var async = require('async');
+var dropTables = require('./sql/drop-tables.sql');
+var ensureLegacyMigrations = require('./sql/ensure-legacy-migrations-table.sql');
+var checkNamespace = require('../sql/check-namespace-column.sql');
 
 function shouldRunMigration(t, done) {
-  const dropTables = load(t, ['sql', 'drop-tables.sql']);
   const client = new pg.Client(t.locals.config.connection);
   client.connect(function(err) {
     if (err) throw err;
@@ -38,9 +39,6 @@ function shouldRunMigration(t, done) {
 }
 
 function shouldEnsureNamespaceColumn(t, done) {
-  const dropTables = load(t, ['sql', 'drop-tables.sql']);
-  const ensureLegacyMigrations = load(t, ['sql', 'ensure-legacy-migrations-table.sql']);
-  const checkNamespace = load(t, ['..', 'sql', 'check-namespace-column.sql']);
   const client = new pg.Client(t.locals.config.connection);
   client.connect(function(err) {
     if (err) throw err;
@@ -64,10 +62,6 @@ function shouldEnsureNamespaceColumn(t, done) {
       });
     });
   });
-}
-
-function load(t, location) {
-  return fs.readFileSync(path.join.apply(null, [__dirname].concat(location)), 'utf-8').replace(/migrations/g, t.locals.config.table);
 }
 
 module.exports = Hath.suite('Driver Tests', [
