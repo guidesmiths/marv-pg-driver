@@ -4,8 +4,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/maintainability)](https://codeclimate.com/github/cressie176/marv-pg-driver/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/test_coverage)](https://codeclimate.com/github/cressie176/marv-pg-driver/test_coverage)
 [![Code Style](https://img.shields.io/badge/code%20style-imperative-brightgreen.svg)](https://github.com/guidesmiths/eslint-config-imperative)
-[![Dependency Status](https://david-dm.org/guidesmiths/marv-pg-driver.svg)](https://david-dm.org/guidesmiths/marv-pg-driver)
-[![devDependencies Status](https://david-dm.org/guidesmiths/marv-pg-driver/dev-status.svg)](https://david-dm.org/guidesmiths/marv-pg-driver?type=dev)
 
 # marv-pg-driver
 A postgres driver for [marv](https://www.npmjs.com/package/marv)
