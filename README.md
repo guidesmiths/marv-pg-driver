@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/travis/guidesmiths/marv-pg-driver/master.svg)](https://travis-ci.org/guidesmiths/marv-pg-driver)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/maintainability)](https://codeclimate.com/github/cressie176/marv-pg-driver/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/test_coverage)](https://codeclimate.com/github/cressie176/marv-pg-driver/test_coverage)
-[![Code Style](https://img.shields.io/badge/code%20style-imperative-brightgreen.svg)](https://github.com/guidesmiths/eslint-config-imperative)
+[![Code Style](https://img.shields.io/badge/code%20style-prettier-brightgreen.svg)](https://github.com/prettier/prettier)
 
 # marv-pg-driver
 
