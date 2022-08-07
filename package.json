@@ -8,6 +8,8 @@
     "docker": "docker run -d --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:14.4-alpine",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prettier": "prettier . --check",
+    "prettier:fix": "prettier . --write",
     "test": "zUnit",
     "prepare": "husky install"
   },
