@@ -6,6 +6,7 @@
 - Use prettier
 - Update dependencies
 - Replace Hath with zUnit
+- Export an arrow function rather than a regular one
 
 ## 4.0.0
 
