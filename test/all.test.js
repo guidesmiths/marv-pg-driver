@@ -1,12 +1,10 @@
-var Hath = require('hath');
-var complianceTests = require('marv-compliance-tests');
-var driverTests = require('./driver-tests');
-var driver = require('..');
-var report = require('hath-report-spec');
-require('hath-assert')(Hath);
+const { Suite, Hook } = require('zunit');
+const complianceTestSuite = require('marv-compliance-tests');
+const driverTestSuite = require('./driver.suite');
+const driver = require('..');
 
-function setup(t, done) {
-  var config = {
+const setup = new Hook('Setup', (hook) => {
+  const config = {
     table: 'pg_migrations',
     quiet: true,
     connection: {
@@ -17,10 +15,10 @@ function setup(t, done) {
       password: '',
     },
   };
-  t.locals.config = config;
-  t.locals.driver = driver(config);
-  t.locals.driver2 = driver(config);
-  t.locals.migrations = {
+  hook.suite.locals.set('config', config);
+  hook.suite.locals.set('driver1', driver(config));
+  hook.suite.locals.set('driver2', driver(config));
+  hook.suite.locals.set('migrations', {
     simple: {
       level: 1,
       comment: 'test migration',
@@ -64,13 +62,8 @@ function setup(t, done) {
       timestamp: new Date(),
       checksum: '401f1b790bf394cf6493425c1d7e33b0',
     },
-  };
-  t.locals.migration = t.locals.migrations.simple;
-  done();
-}
+  });
+  hook.suite.locals.set('migration', hook.suite.locals.get('migrations').simple);
+});
 
-module.exports = Hath.suite('Postgres Driver Tests', [setup, complianceTests, driverTests]);
-
-if (module === require.main) {
-  module.exports(new Hath(report));
-}
+module.exports = new Suite('All Tests').before(setup).add(complianceTestSuite).add(driverTestSuite);

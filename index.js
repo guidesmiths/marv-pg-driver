@@ -1,16 +1,17 @@
-var fs = require('fs');
-var path = require('path');
-var _ = require('lodash');
-var async = require('async');
-var format = require('util').format;
-var debug = require('debug')('marv:pg-driver');
-var supportedDirectives = ['audit', 'comment', 'skip'];
-var pkg = require('./package.json');
+const fs = require('fs');
+const path = require('path');
+const _ = require('lodash');
+const async = require('async');
+const { format } = require('util');
+const debug = require('debug')('marv:pg-driver');
 
-module.exports = function (options) {
-  var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
-  var logger = options.logger || console;
-  var SQL = {
+const supportedDirectives = ['audit', 'comment', 'skip'];
+const pkg = require('./package.json');
+
+module.exports = (options) => {
+  const config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
+  const logger = options.logger || console;
+  const SQL = {
     ensureMigrationsTables: load('ensure-migrations-tables.sql'),
     checkNamespaceColumn: load('check-namespace-column.sql'),
     addNamespaceColumn: load('add-namespace-column.sql'),
@@ -22,10 +23,10 @@ module.exports = function (options) {
     releaseLock: load('release-lock.sql'),
     insertMigration: load('insert-migration.sql'),
   };
-  var pg = config.pg || require('pg');
-  var lockClient;
-  var migrationClient;
-  var userClient;
+  const pg = config.pg || require('pg');
+  let lockClient;
+  let migrationClient;
+  let userClient;
 
   function connect(cb) {
     lockClient = new pg.Client(config.connection);
@@ -65,7 +66,7 @@ module.exports = function (options) {
     ], ensureNamespace);
 
     function ensureMigrationsTables(firstRun, cb) {
-      migrationClient.query(SQL.ensureMigrationsTables, function (err) {
+      migrationClient.query(SQL.ensureMigrationsTables, (err) => {
         if (firstRun && err && err.code === '23505') {
           debug('Possible race condition when creating migration tables - retrying.');
           setTimeout(ensureMigrationsTables.bind(null, false, cb), 100);
@@ -77,7 +78,7 @@ module.exports = function (options) {
 
     function ensureNamespace(err, results) {
       if (err) return cb(err);
-      var steps = [];
+      const steps = [];
       if (_.last(results).rows.length === 0) {
         debug('Adding namespace column');
         steps.push(migrationClient.query.bind(migrationClient, SQL.addNamespaceColumn));
@@ -97,7 +98,7 @@ module.exports = function (options) {
   }
 
   function getMigrations(cb) {
-    migrationClient.query(SQL.retrieveMigrations, function (err, result) {
+    migrationClient.query(SQL.retrieveMigrations, (err, result) => {
       if (err) return cb(err);
       cb(null, result.rows);
     });
@@ -116,20 +117,30 @@ module.exports = function (options) {
     }
 
     debug('Run migration %s: %s\n%s', migration.level, migration.comment, migration.script);
-    userClient.query(migration.script, function (err) {
+    userClient.query(migration.script, (err) => {
       if (err) return cb(decorate(err, migration));
       if (auditable(migration)) {
-        return migrationClient.query(SQL.insertMigration, [migration.level, migration.directives.comment || migration.comment, migration.timestamp, migration.checksum, migration.namespace || 'default'], function (err) {
-          if (err) return cb(decorate(err, migration));
-          cb();
-        });
+        return migrationClient.query(
+          SQL.insertMigration,
+          [
+            migration.level,
+            migration.directives.comment || migration.comment,
+            migration.timestamp,
+            migration.checksum,
+            migration.namespace || 'default',
+          ],
+          (err) => {
+            if (err) return cb(decorate(err, migration));
+            cb();
+          }
+        );
       }
       cb();
     });
   }
 
   function checkDirectives(directives) {
-    var unsupportedDirectives = _.chain(directives).keys().difference(supportedDirectives).value();
+    const unsupportedDirectives = _.chain(directives).keys().difference(supportedDirectives).value();
     if (unsupportedDirectives.length === 0) return;
     if (!config.quiet) {
       logger.warn('Ignoring unsupported directives: %s. Try upgrading %s.', unsupportedDirectives, pkg.name);
@@ -137,8 +148,8 @@ module.exports = function (options) {
   }
 
   function auditable(migration) {
-    if (migration.hasOwnProperty('directives')) return !/^false$/i.test(migration.directives.audit);
-    if (migration.hasOwnProperty('audit')) {
+    if (hasOwnProperty(migration, 'directives')) return !/^false$/i.test(migration.directives.audit);
+    if (hasOwnProperty(migration, 'audit')) {
       if (!config.quiet) logger.warn("The 'audit' option is deprecated. Please use 'directives.audit' instead.");
       return migration.audit !== false;
     }
@@ -146,7 +157,14 @@ module.exports = function (options) {
   }
 
   function getLoggableUrl() {
-    return format('postgres://%s:%s@%s:%s/%s', userClient.connectionParameters.user, '******', userClient.connectionParameters.host, userClient.connectionParameters.port, userClient.connectionParameters.database);
+    return format(
+      'postgres://%s:%s@%s:%s/%s',
+      userClient.connectionParameters.user,
+      '******',
+      userClient.connectionParameters.host,
+      userClient.connectionParameters.port,
+      userClient.connectionParameters.database
+    );
   }
 
   function load(filename) {
@@ -154,23 +172,27 @@ module.exports = function (options) {
   }
 
   function guard(cb) {
-    return function (err) {
+    return (err) => {
       cb(err);
     };
   }
 
   function decorate(err, migration) {
-    return _.merge(err, { migration: migration });
+    return _.merge(err, { migration });
+  }
+
+  function hasOwnProperty(obj, prop) {
+    return Object.prototype.hasOwnProperty.call(obj, prop);
   }
 
   return {
-    connect: connect,
-    disconnect: disconnect,
-    dropMigrations: dropMigrations,
-    ensureMigrations: ensureMigrations,
-    lockMigrations: lockMigrations,
-    unlockMigrations: unlockMigrations,
-    getMigrations: getMigrations,
-    runMigration: runMigration,
+    connect,
+    disconnect,
+    dropMigrations,
+    ensureMigrations,
+    lockMigrations,
+    unlockMigrations,
+    getMigrations,
+    runMigration,
   };
 };

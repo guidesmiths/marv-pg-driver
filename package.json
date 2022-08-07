@@ -7,7 +7,8 @@
     "coverage": "nyc --report html --reporter lcov --reporter text-summary node test/suite.js",
     "docker": "docker run -d --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:14.4-alpine",
     "lint": "eslint .",
-    "test": "node test/suite.js",
+    "lint:fix": "eslint . --fix",
+    "test": "zUnit",
     "prepare": "husky install"
   },
   "engines": {
@@ -17,18 +18,16 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "hath": "^1.0.1",
-    "hath-assert": "^0.2.0",
-    "hath-report-spec": "^0.1.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "marv": "^3.1.0",
-    "marv-compliance-tests": "^3.0.1",
+    "marv-compliance-tests": "^4.0.0",
     "nyc": "^15.1.0",
     "pg": "^8.0.0",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "zunit": "^3.2.1"
   },
   "dependencies": {
     "async": "^3.2.4",
@@ -51,6 +50,7 @@
     "test": "test"
   },
   "lint-staged": {
+    "**/*.js": "npm run lint:fix",
     "**/*": "prettier --write --ignore-unknown"
   },
   "repository": {

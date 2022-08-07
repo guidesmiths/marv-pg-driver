@@ -1,10 +1,11 @@
 # Change Log
 
-## Unreleased
+## 5.0.0
 
 - Use postgres alpine
 - Use prettier
 - Update dependencies
+- Replace Hath with zUnit
 
 ## 4.0.0
 
