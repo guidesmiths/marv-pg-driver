@@ -4,8 +4,9 @@
 
 - Use postgres alpine
 - Use prettier
+- Update dependencies
 
-## 8.0.0
+## 4.0.0
 
 - Updated dependencies
 - Switch pg to a peer dependency

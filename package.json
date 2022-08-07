@@ -10,6 +10,9 @@
     "test": "node test/suite.js",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": ">=10"
+  },
   "author": "GuideSmiths Ltd",
   "license": "ISC",
   "devDependencies": {
@@ -28,9 +31,9 @@
     "prettier": "2.7.1"
   },
   "dependencies": {
-    "async": "^3.1.0",
-    "debug": "^4.1.1",
-    "lodash": "^4.17.15"
+    "async": "^3.2.4",
+    "debug": "^4.3.4",
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "pg": "^7.0.0 || ^8.0.0"
