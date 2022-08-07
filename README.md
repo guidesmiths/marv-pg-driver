@@ -6,9 +6,11 @@
 [![Code Style](https://img.shields.io/badge/code%20style-imperative-brightgreen.svg)](https://github.com/guidesmiths/eslint-config-imperative)
 
 # marv-pg-driver
+
 A postgres driver for [marv](https://www.npmjs.com/package/marv)
 
 ## Usage
+
 ```
 migrations/
   |- 001.create-table.sql
@@ -16,6 +18,7 @@ migrations/
 ```
 
 ### Promises
+
 ```js
 const marv = require('marv/api/promise'); // <-- Promise API
 const driver = require('marv-pg-driver');
@@ -31,6 +34,7 @@ await marv.migrate(migrations, driver({ connection });
 ```
 
 ### Callbacks
+
 ```js
 const marv = require('marv/api/callback'); // <-- Callback API
 const driver = require('marv-pg-driver');
@@ -41,16 +45,17 @@ const connection = {
 };
 
 marv.scan(directory, (err, migrations) => {
-  if (err) throw err
+  if (err) throw err;
   // Connection properties are passed straight pg.Client
   marv.migrate(migrations, driver({ connection }), (err) => {
-    if (err) throw err
+    if (err) throw err;
     // Profit :)
-  })
-})
+  });
+});
 ```
 
 ## Testing
+
 ```bash
 npm install
 npm run docker

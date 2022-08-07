@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Use postgres alpine
+- Use prettier
 
 ## 8.0.0
 
@@ -21,6 +22,7 @@
 - Automated codeclimate reporting
 
 ### Fixed
+
 - Badges
 
 ## 2.2.1

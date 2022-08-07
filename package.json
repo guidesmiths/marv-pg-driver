@@ -7,22 +7,25 @@
     "coverage": "nyc --report html --reporter lcov --reporter text-summary node test/suite.js",
     "docker": "docker run -d --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:14.4-alpine",
     "lint": "eslint .",
-    "test": "node test/suite.js"
+    "test": "node test/suite.js",
+    "prepare": "husky install"
   },
   "author": "GuideSmiths Ltd",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-imperative": "^3.0.0",
-    "eslint-plugin-imperative": "^3.0.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "hath": "^1.0.1",
     "hath-assert": "^0.2.0",
     "hath-report-spec": "^0.1.0",
-    "husky": "^3.0.3",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "marv": "^3.1.0",
     "marv-compliance-tests": "^3.0.1",
     "nyc": "^15.0.1",
-    "pg": "^8.0.0"
+    "pg": "^8.0.0",
+    "prettier": "2.7.1"
   },
   "dependencies": {
     "async": "^3.1.0",
@@ -44,6 +47,9 @@
   "directories": {
     "test": "test"
   },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/guidesmiths/marv-pg-driver.git"
@@ -51,10 +57,5 @@
   "bugs": {
     "url": "https://github.com/guidesmiths/marv-pg-driver/issues"
   },
-  "homepage": "https://github.com/guidesmiths/marv-pg-driver#readme",
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint && npm run codeclimate"
-    }
-  }
+  "homepage": "https://github.com/guidesmiths/marv-pg-driver#readme"
 }

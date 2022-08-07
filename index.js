@@ -7,8 +7,7 @@ var debug = require('debug')('marv:pg-driver');
 var supportedDirectives = ['audit', 'comment', 'skip'];
 var pkg = require('./package.json');
 
-module.exports = function(options) {
-
+module.exports = function (options) {
   var config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
   var logger = options.logger || console;
   var SQL = {
@@ -21,7 +20,7 @@ module.exports = function(options) {
     unlockMigrationsLockTable: load('unlock-migrations-lock-table.sql'),
     acquireLock: load('acquire-lock.sql'),
     releaseLock: load('release-lock.sql'),
-    insertMigration: load('insert-migration.sql')
+    insertMigration: load('insert-migration.sql'),
   };
   var pg = config.pg || require('pg');
   var lockClient;
@@ -33,6 +32,8 @@ module.exports = function(options) {
     migrationClient = new pg.Client(config.connection);
     userClient = new pg.Client(config.connection);
     debug('Connecting to %s', getLoggableUrl());
+
+    // prettier-ignore
     async.series([
       lockClient.connect.bind(lockClient),
       migrationClient.connect.bind(migrationClient),
@@ -42,11 +43,12 @@ module.exports = function(options) {
 
   function disconnect(cb) {
     debug('Disconnecting from %s', getLoggableUrl());
+    // prettier-ignore
     async.series([
       lockClient.end.bind(lockClient),
       migrationClient.end.bind(migrationClient),
       userClient.end.bind(userClient)
-    ], guard(cb));
+    ],guard(cb));
   }
 
   function dropMigrations(cb) {
@@ -55,13 +57,14 @@ module.exports = function(options) {
 
   function ensureMigrations(cb) {
     debug('Ensure migrations');
+    // prettier-ignore
     async.series([
       ensureMigrationsTables.bind(null, true),
       lockMigrations,
       migrationClient.query.bind(migrationClient, SQL.checkNamespaceColumn)
     ], ensureNamespace);
 
-    function ensureMigrationsTables(firstRun, cb){
+    function ensureMigrationsTables(firstRun, cb) {
       migrationClient.query(SQL.ensureMigrationsTables, function (err) {
         if (firstRun && err && err.code === '23505') {
           debug('Possible race condition when creating migration tables - retrying.');
@@ -94,7 +97,7 @@ module.exports = function(options) {
   }
 
   function getMigrations(cb) {
-    migrationClient.query(SQL.retrieveMigrations, function(err, result) {
+    migrationClient.query(SQL.retrieveMigrations, function (err, result) {
       if (err) return cb(err);
       cb(null, result.rows);
     });
@@ -103,7 +106,7 @@ module.exports = function(options) {
   function runMigration(migration, cb) {
     debug('Run migration');
 
-    _.defaults(migration, { directives: {}  });
+    _.defaults(migration, { directives: {} });
 
     checkDirectives(migration.directives);
 
@@ -113,16 +116,10 @@ module.exports = function(options) {
     }
 
     debug('Run migration %s: %s\n%s', migration.level, migration.comment, migration.script);
-    userClient.query(migration.script, function(err) {
+    userClient.query(migration.script, function (err) {
       if (err) return cb(decorate(err, migration));
       if (auditable(migration)) {
-        return migrationClient.query(SQL.insertMigration, [
-          migration.level,
-          migration.directives.comment || migration.comment,
-          migration.timestamp,
-          migration.checksum,
-          migration.namespace || 'default'
-        ], function(err) {
+        return migrationClient.query(SQL.insertMigration, [migration.level, migration.directives.comment || migration.comment, migration.timestamp, migration.checksum, migration.namespace || 'default'], function (err) {
           if (err) return cb(decorate(err, migration));
           cb();
         });
@@ -157,7 +154,7 @@ module.exports = function(options) {
   }
 
   function guard(cb) {
-    return function(err) {
+    return function (err) {
       cb(err);
     };
   }
@@ -174,6 +171,6 @@ module.exports = function(options) {
     lockMigrations: lockMigrations,
     unlockMigrations: unlockMigrations,
     getMigrations: getMigrations,
-    runMigration: runMigration
+    runMigration: runMigration,
   };
 };
