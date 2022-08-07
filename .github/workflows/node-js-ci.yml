@@ -5,6 +5,12 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      image: postgres:14.4-alpine
+      ports:
+        - 5432:5432
+      env:
+        - POSTGRES_HOST_AUTH_METHOD: trust
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x, 18.x]
