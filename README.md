@@ -29,7 +29,7 @@ const connection = {
 };
 
 const migrations = await marv.scan(directory);
-await marv.migrate(migrations, driver({ connection });
+await marv.migrate(migrations, driver({ connection }));
 // Profit :)
 ```
 
