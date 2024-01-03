@@ -1,6 +1,5 @@
 [![NPM version](https://img.shields.io/npm/v/marv-pg-driver.svg?style=flat-square)](https://www.npmjs.com/package/marv-pg-driver)
 [![NPM downloads](https://img.shields.io/npm/dm/marv-pg-driver.svg?style=flat-square)](https://www.npmjs.com/package/marv-pg-driver)
-[![Build Status](https://img.shields.io/travis/guidesmiths/marv-pg-driver/master.svg)](https://travis-ci.org/guidesmiths/marv-pg-driver)
 [![Node.js CI](https://github.com/guidesmiths/marv-pg-driver/workflows/Node.js%20CI/badge.svg)](https://github.com/guidesmiths/marv-pg-driver/actions?query=workflow%3A%22Node.js+CI%22)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/maintainability)](https://codeclimate.com/github/cressie176/marv-pg-driver/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/test_coverage)](https://codeclimate.com/github/cressie176/marv-pg-driver/test_coverage)
