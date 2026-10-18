@@ -1,9 +1,9 @@
 const { Suite, Test } = require('zunit');
-const { strictEqual: eq, match } = require('assert');
+const { strictEqual: eq, match } = require('node:assert');
 const marv = require('marv');
-const path = require('path');
+const path = require('node:path');
 const pg = require('pg');
-const fs = require('fs');
+const fs = require('node:fs');
 const async = require('async');
 
 const shouldRunMigration = new Test('should run migration', (t, done) => {
@@ -49,7 +49,7 @@ const shouldEnsureNamespaceColumn = new Test('should ensure namespace column', (
       if (err) throw err;
       marv.scan(path.join(__dirname, 'migrations'), (err) => {
         if (err) throw err;
-        marv.migrate({}, t.locals.get('driver1'), (err) => {
+        marv.migrate([], t.locals.get('driver1'), (err) => {
           if (err) throw err;
           client.query(checkNamespace, (err, result) => {
             if (err) throw err;

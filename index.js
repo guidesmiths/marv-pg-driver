@@ -1,16 +1,15 @@
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
+const fs = require('node:fs');
+const path = require('node:path');
 const async = require('async');
-const { format } = require('util');
+const { format } = require('node:util');
 const debug = require('debug')('marv:pg-driver');
 
 const supportedDirectives = ['audit', 'comment', 'skip'];
 const pkg = require('./package.json');
 
 module.exports = (options) => {
-  const config = _.merge({ table: 'migrations', connection: {} }, _.omit(options, 'logger'));
-  const logger = options.logger || console;
+  const { logger = console, ...rest } = options;
+  const config = { table: 'migrations', ...rest, connection: { ...rest.connection } };
   const SQL = {
     ensureMigrationsTables: load('ensure-migrations-tables.sql'),
     checkNamespaceColumn: load('check-namespace-column.sql'),
@@ -34,22 +33,22 @@ module.exports = (options) => {
     userClient = new pg.Client(config.connection);
     debug('Connecting to %s', getLoggableUrl());
 
-    // prettier-ignore
-    async.series([
-      lockClient.connect.bind(lockClient),
-      migrationClient.connect.bind(migrationClient),
-      userClient.connect.bind(userClient)
-    ], guard(cb));
+    async.series(
+      [
+        lockClient.connect.bind(lockClient),
+        migrationClient.connect.bind(migrationClient),
+        userClient.connect.bind(userClient),
+      ],
+      guard(cb)
+    );
   }
 
   function disconnect(cb) {
     debug('Disconnecting from %s', getLoggableUrl());
-    // prettier-ignore
-    async.series([
-      lockClient.end.bind(lockClient),
-      migrationClient.end.bind(migrationClient),
-      userClient.end.bind(userClient)
-    ],guard(cb));
+    async.series(
+      [lockClient.end.bind(lockClient), migrationClient.end.bind(migrationClient), userClient.end.bind(userClient)],
+      guard(cb)
+    );
   }
 
   function dropMigrations(cb) {
@@ -58,12 +57,14 @@ module.exports = (options) => {
 
   function ensureMigrations(cb) {
     debug('Ensure migrations');
-    // prettier-ignore
-    async.series([
-      ensureMigrationsTables.bind(null, true),
-      lockMigrations,
-      migrationClient.query.bind(migrationClient, SQL.checkNamespaceColumn)
-    ], ensureNamespace);
+    async.series(
+      [
+        ensureMigrationsTables.bind(null, true),
+        lockMigrations,
+        migrationClient.query.bind(migrationClient, SQL.checkNamespaceColumn),
+      ],
+      ensureNamespace
+    );
 
     function ensureMigrationsTables(firstRun, cb) {
       migrationClient.query(SQL.ensureMigrationsTables, (err) => {
@@ -79,7 +80,7 @@ module.exports = (options) => {
     function ensureNamespace(err, results) {
       if (err) return cb(err);
       const steps = [];
-      if (_.last(results).rows.length === 0) {
+      if (results.at(-1).rows.length === 0) {
         debug('Adding namespace column');
         steps.push(migrationClient.query.bind(migrationClient, SQL.addNamespaceColumn));
       }
@@ -107,7 +108,7 @@ module.exports = (options) => {
   function runMigration(migration, cb) {
     debug('Run migration');
 
-    _.defaults(migration, { directives: {} });
+    migration.directives ??= {};
 
     checkDirectives(migration.directives);
 
@@ -140,7 +141,7 @@ module.exports = (options) => {
   }
 
   function checkDirectives(directives) {
-    const unsupportedDirectives = _.chain(directives).keys().difference(supportedDirectives).value();
+    const unsupportedDirectives = Object.keys(directives).filter((key) => !supportedDirectives.includes(key));
     if (unsupportedDirectives.length === 0) return;
     if (!config.quiet) {
       logger.warn('Ignoring unsupported directives: %s. Try upgrading %s.', unsupportedDirectives, pkg.name);
@@ -148,12 +149,7 @@ module.exports = (options) => {
   }
 
   function auditable(migration) {
-    if (hasOwnProperty(migration, 'directives')) return !/^false$/i.test(migration.directives.audit);
-    if (hasOwnProperty(migration, 'audit')) {
-      if (!config.quiet) logger.warn("The 'audit' option is deprecated. Please use 'directives.audit' instead.");
-      return migration.audit !== false;
-    }
-    return true;
+    return !/^false$/i.test(migration.directives.audit);
   }
 
   function getLoggableUrl() {
@@ -178,11 +174,7 @@ module.exports = (options) => {
   }
 
   function decorate(err, migration) {
-    return _.merge(err, { migration });
-  }
-
-  function hasOwnProperty(obj, prop) {
-    return Object.prototype.hasOwnProperty.call(obj, prop);
+    return Object.assign(err, { migration });
   }
 
   return {
