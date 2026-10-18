@@ -149,12 +149,7 @@ module.exports = (options) => {
   }
 
   function auditable(migration) {
-    if (Object.hasOwn(migration, 'directives')) return !/^false$/i.test(migration.directives.audit);
-    if (Object.hasOwn(migration, 'audit')) {
-      if (!config.quiet) logger.warn("The 'audit' option is deprecated. Please use 'directives.audit' instead.");
-      return migration.audit !== false;
-    }
-    return true;
+    return !/^false$/i.test(migration.directives.audit);
   }
 
   function getLoggableUrl() {

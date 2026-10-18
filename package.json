@@ -12,18 +12,18 @@
     "prepare": "lefthook install"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "author": "GuideSmiths Ltd",
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "lefthook": "^2.2.2",
-    "marv": "^5.0.0",
-    "marv-compliance-tests": "^4.0.0",
-    "nyc": "^15.1.0",
-    "pg": "^8.0.0",
-    "zunit": "^3.2.1"
+    "marv": "^7.0.0",
+    "marv-compliance-tests": "^4.0.1",
+    "nyc": "^18.0.0",
+    "pg": "^8.23.1",
+    "zunit": "^4.0.2"
   },
   "dependencies": {
     "async": "^3.2.6",

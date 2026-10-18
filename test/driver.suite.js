@@ -49,7 +49,7 @@ const shouldEnsureNamespaceColumn = new Test('should ensure namespace column', (
       if (err) throw err;
       marv.scan(path.join(__dirname, 'migrations'), (err) => {
         if (err) throw err;
-        marv.migrate({}, t.locals.get('driver1'), (err) => {
+        marv.migrate([], t.locals.get('driver1'), (err) => {
           if (err) throw err;
           client.query(checkNamespace, (err, result) => {
             if (err) throw err;
