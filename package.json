@@ -5,37 +5,29 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc --report html --reporter lcov --reporter text-summary zUnit",
-    "docker": "docker run -d --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:14.4-alpine",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier . --check",
-    "prettier:fix": "prettier . --write",
+    "docker": "docker run -d --name marv-pg-driver-postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5435:5432 postgres:16-alpine",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "test": "zUnit",
-    "prepare": "husky install"
+    "prepare": "lefthook install"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=20"
   },
   "author": "GuideSmiths Ltd",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.21.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
+    "@biomejs/biome": "2.5.15",
+    "lefthook": "^2.2.2",
     "marv": "^5.0.0",
     "marv-compliance-tests": "^4.0.0",
     "nyc": "^15.1.0",
     "pg": "^8.0.0",
-    "prettier": "2.7.1",
     "zunit": "^3.2.1"
   },
   "dependencies": {
-    "async": "^3.2.4",
-    "debug": "^4.3.4",
-    "lodash": "^4.17.21"
+    "async": "^3.2.6",
+    "debug": "^4.4.3"
   },
   "peerDependencies": {
     "pg": "^7.0.0 || ^8.0.0"
@@ -51,10 +43,6 @@
   ],
   "directories": {
     "test": "test"
-  },
-  "lint-staged": {
-    "**/*.js": "npm run lint:fix",
-    "**/*": "prettier --write --ignore-unknown"
   },
   "repository": {
     "type": "git",

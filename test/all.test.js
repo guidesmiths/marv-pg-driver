@@ -9,7 +9,7 @@ const setup = new Hook('Setup', (hook) => {
     quiet: true,
     connection: {
       host: 'localhost',
-      port: 5432,
+      port: 5435,
       database: 'postgres',
       user: 'postgres',
       password: '',

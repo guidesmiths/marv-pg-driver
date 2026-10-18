@@ -1,9 +1,9 @@
 const { Suite, Test } = require('zunit');
-const { strictEqual: eq, match } = require('assert');
+const { strictEqual: eq, match } = require('node:assert');
 const marv = require('marv');
-const path = require('path');
+const path = require('node:path');
 const pg = require('pg');
-const fs = require('fs');
+const fs = require('node:fs');
 const async = require('async');
 
 const shouldRunMigration = new Test('should run migration', (t, done) => {

@@ -1,0 +1,9 @@
+pre-commit:
+  piped: true
+  jobs:
+    - name: biome
+      glob: '*.{js,json,jsonc}'
+      run: npx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+    - name: test
+      run: npm test

@@ -1,9 +1,7 @@
 [![NPM version](https://img.shields.io/npm/v/marv-pg-driver.svg?style=flat-square)](https://www.npmjs.com/package/marv-pg-driver)
 [![NPM downloads](https://img.shields.io/npm/dm/marv-pg-driver.svg?style=flat-square)](https://www.npmjs.com/package/marv-pg-driver)
-[![Node.js CI](https://github.com/guidesmiths/marv-pg-driver/workflows/Node.js%20CI/badge.svg)](https://github.com/guidesmiths/marv-pg-driver/actions?query=workflow%3A%22Node.js+CI%22)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/maintainability)](https://codeclimate.com/github/cressie176/marv-pg-driver/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f4f00937958b3ad25af5/test_coverage)](https://codeclimate.com/github/cressie176/marv-pg-driver/test_coverage)
-[![Code Style](https://img.shields.io/badge/code%20style-prettier-brightgreen.svg)](https://github.com/prettier/prettier)
+[![Node.js CI](https://github.com/guidesmiths/marv-pg-driver/actions/workflows/node-js-ci.yml/badge.svg)](https://github.com/guidesmiths/marv-pg-driver/actions/workflows/node-js-ci.yml)
+[![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?style=flat-square&logo=biome)](https://biomejs.dev)
 
 # marv-pg-driver
 
@@ -61,3 +59,5 @@ npm install
 npm run docker
 npm test
 ```
+
+`npm run docker` starts PostgreSQL in a container named `marv-pg-driver-postgres`, listening on port 5435 to avoid clashing with any PostgreSQL instance already running on the default port.
